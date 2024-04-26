@@ -1,0 +1,103 @@
+set ns [new Simulator]
+$nscolor1Blue
+$nscolor2Red
+setnf [opensecond.namw]
+$nsnamtrace-all$nf
+setnt[opensecond.trw]
+$nstrace-all$nt proc finish {} {
+globalns nfnt
+$nsflush-trace close $nfclose $nt
+execnamsecond.nam&
+execawk-fthroughput.awksecond.tr&
+exit0
+}
+
+
+setn0[$nsnode] setn1[$nsnode] setn2[$nsnode] setn3[$nsnode] setn4[$nsnode] setn5[$nsnode]
+
+$nsduplex-link$n0$n210Mbps10msDropTail
+$nsduplex-link$n1$n210Mbps10msDropTail
+$nsduplex-link$n2$n310Mbps10msDropTail
+$nsduplex-link$n3$n410Mbps10msDropTail
+$nsduplex-link$n3$n510Mbps10msDropTail
+
+
+$nsduplex-link-op$n0$n2orientdown-right
+$nsduplex-link-op$n1$n2orientup-right
+$nsduplex-link-op$n2$n3orientright
+$nsduplex-link-op$n3$n4orientright-up
+$nsduplex-link-op$n3$n5orientright-down
+
+
+settcp[newAgent/TCP]
+$tcpsetclass_2
+$ns attach-agent $n0 $tcpsetsink[newAgent/TCPSink]
+$nsattach-agent$n4$sink
+$nsconnect$tcp$sink
+$tcpsetfid_1
+
+
+setftp[new Application/FTP]
+$ftpattach-agent$tcp
+$ftpsettype_FTP
+$ftpsetpacket_size_1000
+$ftpsetrate_1mb
+
+
+setudp[newAgent/UDP]
+$nsattach-agent$n1$udp set null [new Agent/Null]
+
+$nsattach-agent$n5$null
+$nsconnect$udp$null
+$udpsetfid_2
+
+
+setcbr[newApplication/Traffic/CBR]
+$cbrattach-agent$udp
+$cbrsettype_ CBR
+$cbrsetpacket_size_1000
+$cbrsetrate_1mb
+
+
+$nsat1.0"$ftpstart"
+$nsat3.0"$ftpstop"
+$nsat1.5"$cbrstart"
+$nsat3.5"$cbrstop"
+
+
+$nsat5.0"finish"
+
+
+$nsrun
+
+
+throughput.awkBEGIN{
+stime=0 ftime=0 flag=0fsize=0 throughput=0 latency=0
+
+stime2=0 ftime2=0
+
+flag2=0
+fsize2=0 throughput2=0 latency2=0
+}
+{
+if($1=="r"&&$4==4){ fsize += $6
+if(flag==0){
+stime=$2 flag = 1
+}
+ftime=$2
+}
+
+
+if($1=="r"&&$4==5){ fsize2 += $6
+if(flag2 == 0){ stime2=$2
+flag2 =1
+}
+ftime2=$2
+}
+} END{
+latency = ftime - stime throughput=(fsize*8)/latency printf("\nLatency:%f",latency)
+printf("\nThroughput:%f",throughput)
+
+latency2=ftime2-stime2
+throughput2 = (fsize2 * 8) / latency2 printf("\n Latency : %f", latency2) printf("\nThroughput:%f",throughput2)
+}
