@@ -1,0 +1,37 @@
+set ns [new Simulator]
+setnf[openstar.namw]
+$nsnamtrace-all$nf proc finish {}{
+globalnsnf
+$nsflush-trace close $nf
+execnamstar.nam&
+exit0
+}
+setn0[$nsnode] setn1[$nsnode] setn2[$nsnode] setn3[$nsnode]
+$nsduplex-link$n0$n210Mb10msDropTail
+$nsduplex-link$n1$n210Mb10msDropTail
+$nsduplex-link$n2$n31Mb 5msDropTail
+$nsqueue-limit$n2$n35
+$nsduplex-link-op$n0$n2orientright-down
+$nsduplex-link-op$n1$n2orientright-up
+$nsduplex-link-op$n2$n3orientright set tcp [new Agent/TCP]
+#$tcpsetclass_2
+$ns attach-agent $n0 $tcpsetsink[newAgent/TCPSink]
+$nsattach-agent$n3$sink
+$nsconnect$tcp$sink
+setftp[new Application/FTP]
+$ftpattach-agent$tcp
+
+$ftpsettype_FTP
+$ftpsetpacket_size_1000
+$ftpsetrate_1Mb
+procplotting{tcpsourcefile1}{ global ns
+setconges[$tcpsourcesetcwnd_] set now [$ns now]
+puts$file1"$now$conges"
+$nsat[expr$now+0.1]"plotting$tcpsource$file1"
+}
+setprint[opentcpconges.xgw]
+$nsat0.0"plotting$tcp$print"
+$nsat1.0"$ftpstart"
+$nsat2.0"$ftpstop"
+$nsat5.0"finish"
+$nsrun
