@@ -1,0 +1,61 @@
+setns[newSimulator] setnf[openls.namw]
+$nsnamtrace-all$nf proc finish {}{
+globalnsnf
+$nsflush-trace close $nf
+execnamls.nam& exit 0
+}
+setn0[$nsnode] setn1[$nsnode] setn2[$nsnode] setn3[$nsnode] setn4[$nsnode]
+
+$nsduplex-link$n0$n110Mb10msDropTail
+$nsqueue-limit$n0$n110
+$nsduplex-link$n1$n210Mb10msDropTail
+$nsqueue-limit$n1$n210
+$nsduplex-link$n2$n310Mb10msDropTail
+$nsqueue-limit$n2$n310
+$nsduplex-link$n3$n010Mb10msDropTail
+$nsqueue-limit$n3$n010
+$nsduplex-link$n1$n310Mb10msDropTail
+
+$nsqueue-limit$n1$n310
+$nsduplex-link$n0$n210Mb10msDropTail
+$nsqueue-limit$n0$n210
+$nsduplex-link$n2$n410Mb10msDropTail
+$nsqueue-limit$n2$n410
+$nsduplex-link-op$n0$n1orientright
+$nsduplex-link-op$n1$n2orientdown
+$nsduplex-link-op$n2$n3orientleft
+$nsduplex-link-op$n3$n0orientup
+$nsduplex-link-op$n1$n3orientdown
+$nsduplex-link-op$n0$n2orientright-down
+$nsduplex-link-op$n2$n4orientright
+
+
+set tcp[ newAgent/TCP]
+$tcpsetclass_2
+$ns attach-agent $n0 $tcpsetsink[newAgent/TCPSink]
+$nsattach-agent$n4$sink
+$nsconnect$tcp$sink
+
+
+setftp[new Application/FTP]
+$ftpattach-agent$tcp
+$ftpsettype_FTP
+$ftpsetpacket_size_1000
+$ftpsetrate_1Mb
+
+
+$nscost$n0$n12
+$nscost$n0$n21
+$nscost$n0$n33
+$nscost$n1$n22
+
+$nscost$n2$n31
+$nscost$n1$n33
+$nscost$n2$n42
+
+
+$nsat1.0"$ftpstart"
+$nsat5.0"$ftpstop"
+$nsrtprotoLS
+$nsat5.0"finish"
+$nsrun
